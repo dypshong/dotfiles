@@ -7,6 +7,8 @@ vim.o.wildmode = 'list:longest'
 vim.o.autowrite = true
 vim.o.cursorline = true
 vim.o.expandtab = true
+vim.g.mapleader = '`'
+vim.o.formatexpr = 'v:lua.vim.lsp.buf.format()'
 
 -- mappings
 vim.keymap.set('c', '<C-A>', '<Home>')
@@ -15,12 +17,12 @@ vim.keymap.set('c', '<C-K>', '<End>')
 vim.keymap.set('c', '<C-F>', '<Right>')
 vim.keymap.set('c', '<C-B>', '<Left>')
 vim.keymap.set('c', '<ESC>b', '<S-Left>')
-vim.keymap.set('c', '<ESC>f', '<S-Right>') vim.keymap.set('c', '<C-K>', function()
+vim.keymap.set('c', '<ESC>f', '<S-Right>')
+vim.keymap.set('c', '<C-K>', function()
     vim.fn.setcmdline(
     string.sub(vim.fn.getcmdline(), 1, vim.fn.getcmdpos()-1)
     )
 end)
-vim.keymap.set('n', '<Space>', '<Leader>')
 
 -- omnifunc
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
@@ -56,6 +58,7 @@ end)
 
 
 vim.keymap.set('n', '<Leader>h', vim.lsp.buf.hover)
+-- vim.keymap.set({'n', 'v'}, '<Leader>f', vim.lsp.buf.format)
 
 -- diagnostics
 vim.diagnostic.toggle = function()
