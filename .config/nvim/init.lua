@@ -9,26 +9,7 @@ vim.o.cursorline = true
 vim.o.expandtab = true
 vim.g.mapleader = '`'
 vim.o.formatexpr = 'v:lua.vim.lsp.buf.format()'
-
--- mappings
-vim.keymap.set('c', '<C-A>', '<Home>')
-vim.keymap.set('c', '<C-D>', '<Del>')
-vim.keymap.set('c', '<C-K>', '<End>')
-vim.keymap.set('c', '<C-F>', '<Right>')
-vim.keymap.set('c', '<C-B>', '<Left>')
-vim.keymap.set('c', '<ESC>b', '<S-Left>')
-vim.keymap.set('c', '<ESC>f', '<S-Right>')
-vim.keymap.set('c', '<C-K>', function()
-    vim.fn.setcmdline(
-    string.sub(vim.fn.getcmdline(), 1, vim.fn.getcmdpos()-1)
-    )
-end)
-
--- omnifunc
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-    pattern = { "*" },
-    command = "inoremap <Tab> <C-x><C-o>",
-})
+--
 
 -- terminal mode
 vim.api.nvim_create_autocmd({ "TermOpen" }, {
@@ -36,35 +17,57 @@ vim.api.nvim_create_autocmd({ "TermOpen" }, {
     command = "set nonu",
 })
 
--- packer
-vim.cmd [[packadd packer.nvim]]
-require('packer').startup(function(use)
-    -- nv-lsp
-    use {
-        "dypshong/nv-lsp",
-    }
-
-    -- nvim-neo-tree
-    use {
-        "nvim-neo-tree/neo-tree.nvim",
-        branch = "v3.x",
-        requires = { 
-            "nvim-lua/plenary.nvim",
-            "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-            "MunifTanjim/nui.nvim",
-        }
-    }
-end)
+require("config.lazy")
 
 
 vim.keymap.set('n', '<Leader>h', vim.lsp.buf.hover)
--- vim.keymap.set({'n', 'v'}, '<Leader>f', vim.lsp.buf.format)
+vim.keymap.set('n', '<Leader>d', vim.lsp.buf.definition)
+vim.keymap.set('n', '<Leader>r', vim.lsp.buf.references)
 
--- diagnostics
-vim.diagnostic.toggle = function()
-    if (vim.diagnostic.is_disabled()) then
-        vim.diagnostic.enable() 
-    else
-        vim.diagnostic.disable() 
-    end
-end
+
+vim.cmd [[colorscheme tokyonight-moon]]
+
+vim.diagnostic.config({
+    virtual_text = true,
+    signs = true,
+    underline = true,
+    update_in_insert = false
+})
+
+vim.lsp.config("lua_ls", {
+    settings = {
+        Lua = {
+            diagnostics = {
+                globals = { "vim" },
+            },
+            workspace = {
+                checkThirdParty = false, -- Optional: disable checking of third-party plugins
+                library = {
+                    "$VIMRUNTIME",
+                    "./lua", -- Assumes your config is in ~/.config/nvim/
+                },
+            },
+            telemetry = {
+                enable = false,
+            },
+        },
+    },
+})
+
+--https://github.com/python-lsp/python-lsp-server/blob/develop/CONFIGURATION.md
+vim.lsp.config("pylsp", {
+    -- Add your lspconfig settings here
+    settings = {
+        pylsp = {
+            plugins = {
+                -- Example: configure pylsp to ignore a specific linting rule (W391)
+                -- pycodestyle = { enabled=false },
+                -- Disable built-in formatting from pylsp if using an external formatter like black via conform
+                --autopep8 = { enabled = true },
+                pycodestyle = { enabled = false },
+                flake8 = { enabled = true, maxLineLength = 80 },
+                yapf = { enabled = true },
+            },
+        },
+    },
+})
